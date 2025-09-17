@@ -25,7 +25,7 @@ This PowerShell script provides a graphical user interface (GUI) built with XAML
 *   **Browse Download Path:** Easily select a local folder to save downloaded packages.
 *   **Progress Tracking:** Provides real-time feedback on download and installation progress.
 *   **Install Packages:** Functionality to install all downloaded UWP packages from a specified directory.
-*   **GUI Interface:** User-friendly WPF-based GUI for ease of use.
+*   **GUI Interface:** User-friendly GUI for ease of use.
 *   **Background Operations:** Downloads and installations run in separate PowerShell runspaces, keeping the UI responsive.
 
 ## How it Works
