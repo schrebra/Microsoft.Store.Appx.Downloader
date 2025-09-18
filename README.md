@@ -1,6 +1,7 @@
 # Microsoft.Store.Appx.Downloader
 
-<img style="width:50%; height:auto;" alt="image" src="https://github.com/user-attachments/assets/06c50864-15a0-4104-9887-a0f82a40f12c" />
+<img style="width:50%; height:auto;" alt="image" src="https://github.com/user-attachments/assets/a4b255e6-ad28-42be-a99d-5003149d49b3" />
+
 <img style="width:50%; height:auto;" alt="image" src="https://github.com/user-attachments/assets/d3e349e6-d338-4c47-a5a8-65088bd7dd65" />
 
 
