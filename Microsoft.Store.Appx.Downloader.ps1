@@ -1,4 +1,4 @@
-﻿# PowerShell function to download UWP package installation files (APPX/MSIX/MSIXBUNDLE/APPXBUNDLE) with dependencies from the Microsoft Store.
+# PowerShell function to download UWP package installation files (APPX/MSIX/MSIXBUNDLE/APPXBUNDLE) with dependencies from the Microsoft Store.
 # https://woshub.com/how-to-download-appx-installation-file-for-any-windows-store-app/
 # https://serverfault.com/questions/1018220/how-do-i-install-an-app-from-windows-store-using-powershell
 
@@ -151,9 +151,10 @@ function Install-AppxPackages {
 $xaml = @"
 <Window xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-        Title="Download UWP App Packages" Height="418" Width="630" WindowStartupLocation="CenterScreen" ResizeMode="CanResize">
+        Title="Download UWP App Packages" Height="450" Width="630" WindowStartupLocation="CenterScreen" ResizeMode="CanResize">
     <Grid Margin="10">
         <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
             <RowDefinition Height="Auto"/>
             <RowDefinition Height="Auto"/>
             <RowDefinition Height="Auto"/>
@@ -187,14 +188,16 @@ $xaml = @"
             <TextBlock><Hyperlink x:Name="LookupHyperlink" NavigateUri="https://apps.microsoft.com/home?hl=en-US&amp;gl=US">Lookup App URLs</Hyperlink></TextBlock>
         </StackPanel>
         
-        <Label Grid.Row="3" Content="Download Path:" FontWeight="Bold" Margin="0,0,0,5"/>
-        <StackPanel Grid.Row="4" Orientation="Horizontal" Margin="0,0,0,10">
+        <CheckBox x:Name="SkipDownloadCheckBox" Content="Skip Download, Install from Existing Directory" Grid.Row="3" Margin="0,0,0,10"/>
+        
+        <Label Grid.Row="4" Content="Path:" FontWeight="Bold" Margin="0,0,0,5"/>
+        <StackPanel Grid.Row="5" Orientation="Horizontal" Margin="0,0,0,10">
             <TextBox x:Name="PathTextBox" Width="385" Text="$ENV:USERPROFILE\Desktop"/>
             <Button x:Name="BrowseButton" Content="Browse" Width="90" Margin="10,0,0,0"/>
         </StackPanel>
         
-        <Label Grid.Row="5" Content="Architecture:" FontWeight="Bold" Margin="0,0,0,5"/>
-        <ComboBox x:Name="ArchComboBox" Grid.Row="6" Margin="0,0,0,10" SelectedIndex="0">
+        <Label Grid.Row="6" Content="Architecture:" FontWeight="Bold" Margin="0,0,0,5"/>
+        <ComboBox x:Name="ArchComboBox" Grid.Row="7" Margin="0,0,0,10" SelectedIndex="0">
             <ComboBoxItem Content="Auto" IsSelected="True"/>
             <ComboBoxItem Content="Neutral"/>
             <ComboBoxItem Content="x64"/>
@@ -202,13 +205,13 @@ $xaml = @"
             <ComboBoxItem Content="ARM"/>
         </ComboBox>
         
-        <Label Grid.Row="7" Content="Progress:" FontWeight="Bold" Margin="0,0,0,5"/>
-        <TextBlock x:Name="ProgressTextBlock" Grid.Row="8" Margin="0,0,0,5" Text="Ready to download" VerticalAlignment="Top" TextWrapping="Wrap" FontStyle="Italic"/>
+        <Label Grid.Row="8" Content="Progress:" FontWeight="Bold" Margin="0,0,0,5"/>
+        <TextBlock x:Name="ProgressTextBlock" Grid.Row="9" Margin="0,0,0,5" Text="Ready to download" VerticalAlignment="Top" TextWrapping="Wrap" FontStyle="Italic"/>
         
-        <Label Grid.Row="9" Content="Status:" FontWeight="Bold" Margin="0,0,0,5"/>
-        <TextBlock x:Name="StatusTextBlock" Grid.Row="10" Margin="0,0,0,5" VerticalAlignment="Center" TextWrapping="Wrap" FontStyle="Italic"/>
+        <Label Grid.Row="10" Content="Status:" FontWeight="Bold" Margin="0,0,0,5"/>
+        <TextBlock x:Name="StatusTextBlock" Grid.Row="11" Margin="0,0,0,5" VerticalAlignment="Center" TextWrapping="Wrap" FontStyle="Italic"/>
         
-        <StackPanel Grid.Row="11" Orientation="Horizontal" VerticalAlignment="Bottom" Margin="0,5,0,0">
+        <StackPanel Grid.Row="12" Orientation="Horizontal" VerticalAlignment="Bottom" Margin="0,5,0,0">
             <Button x:Name="DownloadButton" Content="Download" Width="100" HorizontalAlignment="Left"/>
             <Button x:Name="InstallButton" Content="Install Packages" Width="120" Margin="10,0,0,0" IsEnabled="False"/>
             <Button x:Name="StopButton" Content="Stop" Width="80" Margin="10,0,0,0" IsEnabled="False"/>
@@ -237,6 +240,7 @@ $statusTextBlock = $window.FindName("StatusTextBlock")
 $progressTextBlock = $window.FindName("ProgressTextBlock")
 $pasteUrlButton = $window.FindName("PasteUrlButton")
 $lookupHyperlink = $window.FindName("LookupHyperlink")
+$skipDownloadCheckBox = $window.FindName("SkipDownloadCheckBox")
 
 # Define app URLs
 $appUrls = @{
@@ -294,7 +298,7 @@ $pasteUrlButton.Add_Click({
 # Browse button event handler
 $browseButton.Add_Click({
     $folderBrowser = New-Object System.Windows.Forms.FolderBrowserDialog
-    $folderBrowser.Description = "Select a folder to save the downloaded files"
+    $folderBrowser.Description = "Select a folder to save the downloaded files or containing packages"
     if ($folderBrowser.ShowDialog() -eq [System.Windows.Forms.DialogResult]::OK) {
         $pathTextBox.Text = $folderBrowser.SelectedPath
     }
@@ -306,17 +310,31 @@ $lookupHyperlink.Add_RequestNavigate({
     Start-Process $e.Uri.AbsoluteUri
 })
 
+# Checkbox event handler
+$skipDownloadCheckBox.Add_Checked({
+    $downloadButton.IsEnabled = $false
+    $installButton.IsEnabled = $true
+    $progressTextBlock.Text = "Ready to install"
+    $statusTextBlock.Text = ""
+})
+$skipDownloadCheckBox.Add_Unchecked({
+    $downloadButton.IsEnabled = $true
+    $installButton.IsEnabled = $false
+    $progressTextBlock.Text = "Ready to download"
+    $statusTextBlock.Text = ""
+})
+
 # Global variables for runspaces
 $global:downloadRunspace = $null
 $global:installRunspace = $null
 
 # Function to reset UI to default state
 function Reset-ToDefault {
-    $downloadButton.IsEnabled = $true
-    $installButton.IsEnabled = $false
+    $downloadButton.IsEnabled = -not $skipDownloadCheckBox.IsChecked
+    $installButton.IsEnabled = $skipDownloadCheckBox.IsChecked
     $stopButton.IsEnabled = $false
     $statusTextBlock.Text = ""
-    $progressTextBlock.Text = "Ready to download"
+    $progressTextBlock.Text = if ($skipDownloadCheckBox.IsChecked) { "Ready to install" } else { "Ready to download" }
     # Optionally reset other fields if needed, e.g., $pathTextBox.Text = "$ENV:USERPROFILE\Desktop"
 }
 
@@ -572,13 +590,13 @@ $installButton.Add_Click({
         
         $statusTextBlock.Text = $results
         $installButton.IsEnabled = $true
-        $downloadButton.IsEnabled = $true
+        $downloadButton.IsEnabled = -not $skipDownloadCheckBox.IsChecked
         $progressTextBlock.Text = "Installation complete"
         
         # Reset to default for reuse
         Reset-ToDefault
     } else {
-        $statusTextBlock.Text = "Please provide a valid download path containing packages."
+        $statusTextBlock.Text = "Please provide a valid path containing packages."
     }
 })
 
@@ -598,7 +616,7 @@ $stopButton.Add_Click({
         $global:installRunspace = $null
         $statusTextBlock.Text = "Installation stopped."
         $installButton.IsEnabled = $true
-        $downloadButton.IsEnabled = $true
+        $downloadButton.IsEnabled = -not $skipDownloadCheckBox.IsChecked
         $stopButton.IsEnabled = $false
         $progressTextBlock.Text = "Ready"
     }
