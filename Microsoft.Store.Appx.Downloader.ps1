@@ -215,6 +215,7 @@ $xaml = @"
             <ListBoxItem Content="Microsoft News"/>
             <ListBoxItem Content="Windows Sound Recorder"/>
             <ListBoxItem Content="Microsoft Teams"/>
+            <ListBoxItem Content="App Installer"/>
         </ListBox>
         
         <StackPanel Grid.Row="2" Orientation="Horizontal" Margin="0,0,0,10">
@@ -299,6 +300,7 @@ $appUrls = @{
     "Microsoft News" = "https://apps.microsoft.com/detail/9wzdncrfhvfw?hl=en-US&gl=US"
     "Windows Sound Recorder" = "https://apps.microsoft.com/detail/9wzdncrfhwkn?hl=en-US&gl=US"
     "Microsoft Teams" = "https://apps.microsoft.com/detail/xp8bt8dw290mpq?hl=en-US&gl=US"
+    "App Installer" = "https://apps.microsoft.com/detail/9nblggh4nns1?hl=en-US&gl=US"
 }
 
 # Placeholder text handling for UriTextBox
