@@ -3,74 +3,43 @@
 
 <img style="width:50%; height:auto;" alt="image" src="https://github.com/user-attachments/assets/24fd8894-d27e-42d4-9e1a-e8e9bef8949f" />
 
+# Microsoft Store Appx Downloader and Installer
 
-
-# UWP App Package Downloader and Installer (PowerShell GUI)
-
-This PowerShell script provides a graphical user interface (GUI) built with XAML to download and install Universal Windows Platform (UWP) application packages directly from the Microsoft Store. It fetches `.appx`, `.appxbundle`, `.msix`, and `.msixbundle` files along with their dependencies.
-
-**Why this script is useful:**
-
-*   **Offline Installation:** Download UWP apps for installation on systems without internet access.
-*   **Version Control:** Obtain specific versions of apps, which can be crucial for development, testing, or compatibility.
-*   **Bulk Downloads:** Easily download multiple app packages and their dependencies.
-*   **System Administration:** Deploy UWP apps across multiple machines in an enterprise environment without relying on the Microsoft Store app.
-*   **Troubleshooting:** Reinstall problematic UWP apps from scratch with known good packages.
-
-## Features
-
-*   **Download UWP Packages:** Fetches `.appx`, `.msix`, `.appxbundle`, `.msixbundle` files and their dependencies.
-*   **Select Architecture:** Choose between `Auto`, `Neutral`, `x64`, `x86`, and `ARM` architectures for downloads.
-*   **Pre-defined Apps:** Quick selection for common Microsoft Store apps like Clock, Paint, Photos, etc.
-*   **Custom URL Support:** Allows pasting any Microsoft Store app URL for download.
-*   **Browse Download Path:** Easily select a local folder to save downloaded packages.
-*   **Progress Tracking:** Provides real-time feedback on download and installation progress.
-*   **Install Packages:** Functionality to install all downloaded UWP packages from a specified directory.
-*   **GUI Interface:** User-friendly GUI for ease of use.
-*   **Background Operations:** Downloads and installations run in separate PowerShell runspaces, keeping the UI responsive.
-
-## How it Works
-
-The script leverages the `store.rg-adguard.net` API to retrieve direct download links for UWP packages from the Microsoft Store. It then uses `Invoke-WebRequest` to download these files. For installation, it utilizes the built-in `Add-AppxPackage` PowerShell cmdlet.
-
-## Who is this for?
-
-*   **System Administrators:** For deploying and managing UWP applications in corporate environments.
-*   **Developers:** For testing app installations, managing dependencies, or working with specific app versions.
-*   **IT Enthusiasts:** For those who prefer direct package management or need to install apps offline.
-*   **Users with Limited Internet Access:** To download apps once and install them on multiple machines.
-
-## Installation and Usage
-
-1.  **Save the Script:** Save the entire code block as a `.ps1` file (e.g., `DownloadUWPApps.ps1`).
-
-2.  **Unblock the Script (if necessary):** If you downloaded the script, Windows might mark it as untrusted. Right-click the `.ps1` file, go to `Properties`, and check the `Unblock` box at the bottom, then click `OK`.
-
-3.  **Run the Script:** Open PowerShell (as Administrator is recommended for installation) and navigate to the directory where you saved the script, then run it:
-
-    ```powershell
-    Set-ExecutionPolicy -ExecutionPolicy Bypass -Scope Process # Only if you face execution policy issues
-    .\DownloadUWPApps.ps1
-    ```
-
-    You can also simply right-click the `.ps1` file and choose "Run with PowerShell."
-
-4.  **Using the GUI:**
-    *   **Select an App:** Choose a common app from the dropdown or select "Custom URL" to paste your own.
-    *   **Enter URL:** If "Custom URL" is selected, paste the Microsoft Store app URL into the text box. (Example: `https://apps.microsoft.com/detail/9wzdncrfj3pr?hl=en-US&gl=US`)
-    *   **Set Download Path:** Specify where you want the packages to be saved. Use the "Browse" button to select a folder.
-    *   **Choose Architecture:** Select the desired processor architecture for the packages.
-    *   **Download:** Click the "Download" button to start fetching the files.
-    *   **Install:** Once downloaded, click "Install Packages" to install all `.appx`/`.msix` files found in the download directory.
-
-## Troubleshooting
-
-*   **`store.rg-adguard.net` API:** This script relies on an external service to get download links. If the service is down or changes its API, the download functionality may break.
-*   **Execution Policy:** If you encounter errors running the script, your PowerShell execution policy might be preventing it. Use `Set-ExecutionPolicy -ExecutionPolicy Bypass -Scope Process` in your PowerShell session before running the script.
-*   **Administrator Rights:** Installing APPX/MSIX packages often requires Administrator privileges. Run PowerShell as an Administrator when executing the script, especially if you plan to use the "Install Packages" feature.
-*   **Network Issues:** Ensure you have a stable internet connection for downloading.
-*   **"Couldn't determine file size" warning:** This might occur if the `Content-Length` header is not provided by the download server. The download will likely still proceed, but progress tracking for that specific file might be less accurate.
+This PowerShell script provides a robust solution for downloading and installing Windows UWP (Universal Windows Platform) applications and their dependencies directly from the Microsoft Store. Unlike the native Store app, this tool offers granular control, allowing you to manage and deploy applications in various scenarios, including offline or restricted network environments. The project is designed with a user-friendly GUI built with WPF, making the entire process accessible and efficient.
 
 ---
 
-**Disclaimer:** This script uses a third-party service (`store.rg-adguard.net`) to obtain direct download links for Microsoft Store apps. Use at your own discretion. Always ensure you trust the source of any script you run on your system.
+## What It Does 🚀
+
+The core function of this script is to act as an advanced package manager for Windows Store apps. It automates several critical tasks that are otherwise difficult or impossible to perform manually.
+
+### Key Features:
+* **Download App Packages:** The script can download all necessary installation files, including `.appx`, `.appxbundle`, `.msix`, and `.msixbundle` formats. It fetches these files by communicating with a third-party service, `store.rg-adguard.net`, which provides direct download links to the app packages.
+* **Architecture Filtering:** The tool intelligently filters packages based on your system's architecture (`x64`, `x86`, `ARM`) or allows you to specify a different one. This ensures you download only the correct and compatible files, saving bandwidth and storage space.
+* **Dependency Resolution:** A major advantage is its ability to download all required dependencies along with the main application package. This is crucial for offline installations, as it guarantees that all components needed for the app to function are available.
+* **Customizable Downloads:** You can select from a predefined list of popular Windows apps or provide a custom Microsoft Store URL to download any publicly available app.
+* **Bulk and Incremental Downloads:** The "Download All" feature allows you to fetch a collection of essential apps at once. The script also performs a file existence check, skipping downloads for any packages you already have, thus preventing redundant data transfer.
+* **Offline Installation:** The "Install" functions enable you to install the downloaded packages without an internet connection. The script supports installing from a single directory or from multiple subfolders, ideal for bulk deployment.
+* **Graphical User Interface (GUI):** A simple but effective WPF-based GUI makes the tool intuitive. You can easily select apps, specify download paths, choose architectures, and monitor the progress in real-time.
+
+---
+
+## Who It's For 🎯
+
+This tool is a valuable asset for several user groups, streamlining app management and deployment tasks.
+
+* **System Administrators & IT Professionals:** You can use this script to create a local, offline repository of core Windows applications. This is essential for deploying systems in secure or isolated networks where access to the Microsoft Store is restricted. It also serves as a reliable method for reinstalling default apps that might be corrupted or missing.
+* **Power Users & Enthusiasts:** If you frequently set up new Windows machines, this script can save a significant amount of time by allowing you to batch-download all your favorite apps and their dependencies in advance. You can then quickly install them on a fresh OS install without a persistent internet connection.
+* **Software Developers:** The tool can be used to acquire different versions of a UWP app for testing across various architectures or to debug installation issues with dependencies.
+
+---
+
+## Why You Need It ✨
+
+The native Microsoft Store app, while convenient, lacks the flexibility and control required for advanced management scenarios. This PowerShell script fills that gap by providing a powerful, scriptable alternative.
+
+### Common Use Cases:
+* **Bypassing Store Restrictions:** In environments with strict firewalls or no internet access, this script is the only way to get official app packages.
+* **Restoring Core Apps:** If a Windows update or system corruption removes built-in UWP apps like Notepad or Paint, this tool provides a straightforward way to reinstall them with all their dependencies.
+* **Creating a Master Image:** For IT professionals, this script can be integrated into a post-installation script to automatically populate a new Windows image with all necessary UWP applications.
+* **Portability:** Once you have downloaded the `.appx` and `.msix` files, they are completely portable. You can store them on a USB drive and install them on any compatible Windows PC, anywhere.
